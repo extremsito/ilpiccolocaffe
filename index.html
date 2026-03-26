@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Il Piccolo Caffè – Cafeteria · Dolç i Salat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --verde: #1a4a35;
+      --verde-oscuro: #0f2e20;
+      --crema: #f5efe6;
+      --crema-oscuro: #e8ddd0;
+      --dorado: #c8a96e;
+      --dorado-claro: #e2c99a;
+      --blanco: #faf7f2;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--verde-oscuro); color: var(--crema); overflow-x: hidden; }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.2rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: linear-gradient(to bottom, rgba(15,46,32,0.97), transparent);
+      transition: background 0.4s;
+    }
+    nav.scrolled { background: rgba(15,46,32,0.97); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(200,169,110,0.15); }
+    .nav-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.3rem; color: var(--dorado); text-decoration: none; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: var(--crema); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.8; transition: opacity 0.2s, color 0.2s; }
+    .nav-links a:hover { opacity: 1; color: var(--dorado); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; position: relative; padding: 6rem 2rem 4rem;
+      background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(45,107,74,0.35) 0%, transparent 70%),
+                  radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,169,110,0.08) 0%, transparent 60%),
+                  var(--verde-oscuro);
+    }
+    .hero-cup { font-size: 3.5rem; margin-bottom: 1rem; opacity: 0; animation: fadeUp 0.8s 0.1s forwards; }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dorado); margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s 0.3s forwards; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(3.5rem, 9vw, 7rem); font-weight: 600; font-style: italic; line-height: 1.05; color: var(--blanco); opacity: 0; animation: fadeUp 0.9s 0.5s forwards; }
+    .hero h1 em { color: var(--dorado); font-style: normal; }
+    .hero-sub { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--crema-oscuro); margin-top: 1.2rem; opacity: 0; animation: fadeUp 0.8s 0.8s forwards; }
+    .hero-divider { display: flex; align-items: center; gap: 1rem; margin: 2rem 0; opacity: 0; animation: fadeUp 0.8s 1s forwards; }
+    .hero-divider span { width: 60px; height: 1px; background: var(--dorado); opacity: 0.5; }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; opacity: 0; animation: fadeUp 0.8s 1.2s forwards; }
+    .btn { padding: 0.85rem 2.2rem; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: all 0.3s; cursor: pointer; border: none; display: inline-block; }
+    .btn-primary { background: var(--dorado); color: var(--verde-oscuro); font-weight: 500; }
+    .btn-primary:hover { background: var(--dorado-claro); transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: var(--crema); border: 1px solid rgba(245,239,230,0.35); }
+    .btn-outline:hover { border-color: var(--dorado); color: var(--dorado); transform: translateY(-2px); }
+    .hero-scroll { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; opacity: 0; animation: fadeUp 0.8s 1.6s forwards; }
+    .hero-scroll span { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dorado); opacity: 0.7; }
+    .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--dorado), transparent); animation: scrollPulse 2s infinite; }
+
+    /* SECTIONS */
+    .section { padding: 6rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-tag { font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dorado); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.8rem; }
+    .section-tag::after { content: ''; flex: 1; height: 1px; background: var(--dorado); opacity: 0.3; max-width: 40px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-style: italic; line-height: 1.2; color: var(--blanco); margin-bottom: 1.5rem; }
+
+    /* ABOUT */
+    .about { background: var(--verde); position: relative; overflow: hidden; }
+    .about::before { content: '"'; position: absolute; font-family: 'Playfair Display', serif; font-size: 20rem; color: rgba(200,169,110,0.06); top: -3rem; left: 2rem; line-height: 1; pointer-events: none; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .section-body { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; line-height: 1.8; color: var(--crema-oscuro); }
+    .about-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem; }
+    .fact { border-left: 2px solid var(--dorado); padding-left: 1rem; }
+    .fact-num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--dorado); line-height: 1; }
+    .fact-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--crema-oscuro); opacity: 0.7; margin-top: 0.3rem; }
+    .about-card { background: var(--verde-oscuro); border: 1px solid rgba(200,169,110,0.2); border-radius: 4px; padding: 3rem 2.5rem; text-align: center; position: relative; }
+    .about-card-emoji { font-size: 4rem; margin-bottom: 1rem; display: block; }
+    .about-card-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.8rem; color: var(--dorado); margin-bottom: 0.5rem; }
+    .about-card-sub { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--crema-oscuro); opacity: 0.6; }
+    .about-card-rating { margin-top: 2rem; }
+    .stars { color: var(--dorado); font-size: 1.2rem; letter-spacing: 0.1em; }
+    .rating-text { font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; color: var(--crema-oscuro); opacity: 0.7; margin-top: 0.5rem; }
+    .about-badge { position: absolute; top: -1.2rem; right: 1.5rem; background: var(--dorado); color: var(--verde-oscuro); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; padding: 0.4rem 0.9rem; border-radius: 2px; }
+
+    /* GALLERY */
+    .gallery-section { background: var(--verde-oscuro); }
+    .gallery-header { text-align: center; margin-bottom: 3rem; }
+    .gallery-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 240px 240px; gap: 1rem; }
+    .gallery-item { border-radius: 4px; overflow: hidden; position: relative; border: 1px solid rgba(200,169,110,0.12); background: var(--verde); }
+    .gallery-item.featured { grid-row: span 2; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
+    .gallery-item:hover img { transform: scale(1.05); }
+    .gallery-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(15,46,32,0.9)); padding: 1.5rem 1.2rem 1rem; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.95rem; color: var(--crema); opacity: 0; transition: opacity 0.3s; }
+    .gallery-item:hover .gallery-caption { opacity: 1; }
+    /* Placeholder gradient when image fails */
+    .gallery-item { background: linear-gradient(135deg, var(--verde) 0%, var(--verde-oscuro) 100%); }
+    .gallery-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; opacity: 0.3; }
+    .gallery-placeholder span { font-size: 2.5rem; }
+    .gallery-placeholder p { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dorado); }
+
+    .ig-cta { text-align: center; margin-top: 2.5rem; }
+    .ig-btn { display: inline-flex; align-items: center; gap: 0.7rem; padding: 0.9rem 2.2rem; border: 1px solid rgba(200,169,110,0.35); border-radius: 2px; color: var(--crema); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; transition: all 0.3s; }
+    .ig-btn:hover { border-color: var(--dorado); color: var(--dorado); transform: translateY(-2px); }
+
+    /* MENU */
+    .menu-section { background: var(--verde); }
+    .menu-header { text-align: center; margin-bottom: 3rem; }
+    .menu-tabs { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 3rem; flex-wrap: wrap; }
+    .tab-btn { padding: 0.6rem 1.6rem; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; border: 1px solid rgba(200,169,110,0.3); border-radius: 2px; background: transparent; color: var(--crema-oscuro); cursor: pointer; transition: all 0.25s; font-family: 'DM Sans', sans-serif; }
+    .tab-btn.active, .tab-btn:hover { background: var(--dorado); color: var(--verde-oscuro); border-color: var(--dorado); }
+    .menu-panel { display: none; }
+    .menu-panel.active { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+    .menu-item-row { display: flex; justify-content: space-between; align-items: center; padding: 1.1rem 1.3rem; background: var(--verde-oscuro); border: 1px solid rgba(200,169,110,0.1); border-radius: 3px; transition: border-color 0.25s; }
+    .menu-item-row:hover { border-color: rgba(200,169,110,0.35); }
+    .menu-item-name { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--blanco); }
+    .menu-item-desc { font-size: 0.72rem; color: var(--crema-oscuro); opacity: 0.6; margin-top: 0.2rem; }
+    .menu-item-price { color: var(--dorado); font-family: 'Playfair Display', serif; font-size: 1rem; white-space: nowrap; margin-left: 1rem; flex-shrink: 0; }
+    .menu-note { text-align: center; margin-top: 2rem; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; color: var(--crema-oscuro); opacity: 0.45; }
+
+    /* HOURS */
+    .hours-section { background: var(--verde-oscuro); }
+    .hours-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .hours-table { width: 100%; border-collapse: collapse; }
+    .hours-table tr { border-bottom: 1px solid rgba(200,169,110,0.1); }
+    .hours-table tr:last-child { border-bottom: none; }
+    .hours-table td { padding: 0.9rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--crema-oscuro); }
+    .hours-table td:first-child { color: var(--blanco); font-weight: 500; }
+    .hours-table td:last-child { text-align: right; color: var(--dorado); }
+    .hours-table tr.closed td { opacity: 0.4; }
+    .hours-table tr.closed td:last-child { color: var(--crema-oscuro); }
+    .contact-item { display: flex; align-items: flex-start; gap: 1.2rem; padding: 1.3rem 0; border-bottom: 1px solid rgba(200,169,110,0.1); }
+    .contact-item:last-child { border-bottom: none; }
+    .contact-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .contact-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dorado); margin-bottom: 0.3rem; }
+    .contact-value { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--crema-oscuro); line-height: 1.5; text-decoration: none; }
+    a.contact-value:hover { color: var(--dorado); }
+
+    /* MAP */
+    .map-section { background: var(--verde); }
+    .map-link-card {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+      gap: 1.2rem; padding: 5rem 2rem; margin-top: 3rem;
+      background: var(--verde-oscuro); border: 1px solid rgba(200,169,110,0.2); border-radius: 4px;
+      text-decoration: none; transition: border-color 0.3s, transform 0.3s; cursor: pointer;
+    }
+    .map-link-card:hover { border-color: rgba(200,169,110,0.5); transform: translateY(-3px); }
+    .map-icon { font-size: 3.5rem; }
+    .map-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.8rem; color: var(--blanco); }
+    .map-addr { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--crema-oscuro); opacity: 0.7; }
+    .map-cta-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dorado); margin-top: 0.5rem; }
+
+    /* REVIEWS */
+    .reviews-section { background: var(--verde-oscuro); }
+    .reviews-header { text-align: center; margin-bottom: 3rem; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .review-card { background: var(--verde); border: 1px solid rgba(200,169,110,0.12); border-radius: 4px; padding: 2rem; }
+    .review-stars { color: var(--dorado); font-size: 1rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+    .review-text { font-family: 'Cormorant Garamond', serif; font-size: 1rem; line-height: 1.7; color: var(--crema-oscuro); font-style: italic; margin-bottom: 1.2rem; }
+    .review-author { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dorado); opacity: 0.7; }
+
+    /* FOOTER */
+    footer { background: #080f0a; padding: 3rem 2rem; text-align: center; border-top: 1px solid rgba(200,169,110,0.1); }
+    .footer-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2rem; color: var(--dorado); margin-bottom: 0.5rem; }
+    .footer-sub { font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--crema-oscuro); opacity: 0.4; margin-bottom: 1.5rem; }
+    .footer-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .footer-bottom { font-size: 0.72rem; color: var(--crema-oscuro); opacity: 0.3; margin-top: 1rem; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes scrollPulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s, transform 0.7s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      .about-grid, .hours-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .gallery-item.featured { grid-row: span 1; }
+      .menu-panel.active { grid-template-columns: 1fr; }
+      .reviews-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .about-facts { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">Il Piccolo Caffè</a>
+    <ul class="nav-links">
+      <li><a href="#about">Nosaltres</a></li>
+      <li><a href="#gallery">Galeria</a></li>
+      <li><a href="#menu">Carta</a></li>
+      <li><a href="#hours">Horaris</a></li>
+      <li><a href="#location">On som</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-cup">☕</div>
+    <p class="hero-eyebrow">Cafeteria · Dolç i Salat · Sentmenat</p>
+    <h1><em>Il Piccolo</em><br>Caffè</h1>
+    <p class="hero-sub">— Un racó d'Itàlia al cor del Vallès —</p>
+    <div class="hero-divider">
+      <span></span>
+      <span style="color:var(--dorado)">✦</span>
+      <span></span>
+    </div>
+    <div class="hero-cta">
+      <a href="#menu" class="btn btn-primary">Veure la carta</a>
+      <a href="tel:+34616464340" class="btn btn-outline">📞 Trucar ara</a>
+    </div>
+    <div class="hero-scroll">
+      <span>Descobreix</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about section" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="reveal">
+          <p class="section-tag">La nostra història</p>
+          <h2 class="section-title">Un cafè familiar, fet amb amor i tradició</h2>
+          <p class="section-body">Il Piccolo Caffè és molt més que una cafeteria. És un lloc on el temps s'atura, l'aroma del cafè omple l'aire i cada client és tractat com a casa. Un espai familiar, acollidor i autèntic, al cor de Sentmenat.</p>
+          <p class="section-body" style="margin-top:1rem">Des dels esmorzars madrugadors fins a les meriandes de tarda, oferim productes frescos, dolços artesanals i entrepans casolans que sempre deixen ganes de tornar.</p>
+          <div class="about-facts">
+            <div class="fact"><div class="fact-num">4.5★</div><div class="fact-label">Valoració Google</div></div>
+            <div class="fact"><div class="fact-num">49+</div><div class="fact-label">Ressenyes</div></div>
+            <div class="fact"><div class="fact-num">100%</div><div class="fact-label">Tracte familiar</div></div>
+            <div class="fact"><div class="fact-num">🅿️</div><div class="fact-label">Aparcament gratuït</div></div>
+          </div>
+        </div>
+        <div class="reveal">
+          <div class="about-card">
+            <div class="about-badge">Recomanat ✦</div>
+            <span class="about-card-emoji">🫶</span>
+            <div class="about-card-title">Il Piccolo Caffè</div>
+            <div class="about-card-sub">Cafeteria · Dolç i Salat</div>
+            <div class="about-card-rating">
+              <div class="stars">★★★★★</div>
+              <p class="rating-text">4.5 / 5 – 49 ressenyes a Google</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery-section section" id="gallery">
+    <div class="container">
+      <div class="gallery-header reveal">
+        <p class="section-tag" style="justify-content:center">Galeria</p>
+        <h2 class="section-title" style="text-align:center">Moments i sabors</h2>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item featured reveal">
+          <img src="https://lh3.googleusercontent.com/p/AF1QipN2r5j3bFZX9YmoBRj7bGqkMqEm2JiXHc4ZPxM=s1360-w1360-h1020" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+               alt="Il Piccolo Caffè interior" loading="lazy" />
+          <div class="gallery-placeholder" style="display:none"><span>☕</span><p>Interior del local</p></div>
+          <div class="gallery-caption">L'ambient càlid del nostre local</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img src="https://lh3.googleusercontent.com/p/AF1QipMfv2wHFOiCTXGWjKvvP5i-3zqLi7DmWfY9lKs=s1360-w1360-h1020"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+               alt="Cafè artesanal" loading="lazy" />
+          <div class="gallery-placeholder" style="display:none"><span>☕</span><p>Cafè d'especialitat</p></div>
+          <div class="gallery-caption">Cafè d'especialitat</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img src="https://lh3.googleusercontent.com/p/AF1QipOeMPJbX25BHkl5Gi5w8tVJGFI5JKH4WJeDmFs=s1360-w1360-h1020"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+               alt="Dolços artesanals" loading="lazy" />
+          <div class="gallery-placeholder" style="display:none"><span>🥐</span><p>Dolços artesanals</p></div>
+          <div class="gallery-caption">Dolços fets amb amor</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img src="https://lh3.googleusercontent.com/p/AF1QipPj9LmZ3bHY5XkMdJt4b6VEBHbR3PjXvOdN5NY=s1360-w1360-h1020"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+               alt="Entrepans calents" loading="lazy" />
+          <div class="gallery-placeholder" style="display:none"><span>🥪</span><p>Entrepans casolans</p></div>
+          <div class="gallery-caption">Entrepans casolans calents</div>
+        </div>
+        <div class="gallery-item reveal">
+          <img src="https://lh3.googleusercontent.com/p/AF1QipNiS0N0m6mBPFi9JZxNx7QsTVxJBhp8PB6B7tY=s1360-w1360-h1020"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+               alt="Terrassa exterior" loading="lazy" />
+          <div class="gallery-placeholder" style="display:none"><span>☀️</span><p>Terrassa exterior</p></div>
+          <div class="gallery-caption">Terrassa amb servei de taula</div>
+        </div>
+      </div>
+      <div class="ig-cta reveal">
+        <a href="https://www.instagram.com/_ilpiccolocaffe_/" target="_blank" rel="noopener" class="ig-btn">
+          <span>📸</span> Segueix-nos a Instagram · @_ilpiccolocaffe_
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section class="menu-section section" id="menu">
+    <div class="container">
+      <div class="menu-header reveal">
+        <p class="section-tag" style="justify-content:center">Carta</p>
+        <h2 class="section-title" style="text-align:center">Dolç i Salat, per a cada moment</h2>
+      </div>
+      <div class="menu-tabs reveal">
+        <button class="tab-btn active" onclick="showTab('cafeteria', this)">☕ Cafeteria</button>
+        <button class="tab-btn" onclick="showTab('dolc', this)">🥐 Dolç</button>
+        <button class="tab-btn" onclick="showTab('salat', this)">🥪 Salat</button>
+        <button class="tab-btn" onclick="showTab('begudes', this)">🥤 Begudes</button>
+      </div>
+
+      <div id="tab-cafeteria" class="menu-panel active">
+        <div class="menu-item-row"><div><div class="menu-item-name">Cafè sol</div></div><div class="menu-item-price">1,20€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Tallat</div></div><div class="menu-item-price">1,30€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Cafè amb llet</div></div><div class="menu-item-price">1,60€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Capuccino</div></div><div class="menu-item-price">1,80€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Cortado</div></div><div class="menu-item-price">1,30€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Infusions</div><div class="menu-item-desc">Te, menta, til·la…</div></div><div class="menu-item-price">1,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Cafè americà</div></div><div class="menu-item-price">1,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Descafeïnat</div></div><div class="menu-item-price">1,30€</div></div>
+      </div>
+
+      <div id="tab-dolc" class="menu-panel">
+        <div class="menu-item-row"><div><div class="menu-item-name">Croissant mantequilla</div></div><div class="menu-item-price">1,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Napolitana de xocolata</div></div><div class="menu-item-price">1,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Pastís del dia</div><div class="menu-item-desc">Casolà, fet al moment</div></div><div class="menu-item-price">2,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Magdalenes casolanes</div></div><div class="menu-item-price">1,20€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Torrada amb melmelada</div></div><div class="menu-item-price">2,20€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Muffin del dia</div></div><div class="menu-item-price">1,80€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Donut</div></div><div class="menu-item-price">1,20€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Torrada amb nutella</div></div><div class="menu-item-price">2,50€</div></div>
+      </div>
+
+      <div id="tab-salat" class="menu-panel">
+        <div class="menu-item-row"><div><div class="menu-item-name">Entrepà casolà calent</div><div class="menu-item-desc">Ingredients del dia</div></div><div class="menu-item-price">3,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Torrada amb tomàquet</div><div class="menu-item-desc">Pa de pagès, oli d'oliva</div></div><div class="menu-item-price">2,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Entrepà de pernil dolç</div></div><div class="menu-item-price">3,00€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Biquini</div><div class="menu-item-desc">Pernil i formatge</div></div><div class="menu-item-price">3,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Entrepà de pernil serrà</div></div><div class="menu-item-price">3,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Torrada amb oli i sal</div></div><div class="menu-item-price">1,80€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Entrepà de truita</div></div><div class="menu-item-price">3,00€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Plat combinat</div><div class="menu-item-desc">Consultar disponibilitat</div></div><div class="menu-item-price">—</div></div>
+      </div>
+
+      <div id="tab-begudes" class="menu-panel">
+        <div class="menu-item-row"><div><div class="menu-item-name">Suc de taronja natural</div></div><div class="menu-item-price">2,50€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Refrescs</div><div class="menu-item-desc">Coca-cola, Fanta, Aquarius…</div></div><div class="menu-item-price">1,80€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Aigua</div></div><div class="menu-item-price">1,20€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Cervesa</div></div><div class="menu-item-price">2,00€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Batut de fruita</div></div><div class="menu-item-price">3,00€</div></div>
+        <div class="menu-item-row"><div><div class="menu-item-name">Llet freda</div></div><div class="menu-item-price">1,50€</div></div>
+      </div>
+
+      <p class="menu-note">* Preus orientatius. Consulta'ns per a la carta actualitzada.</p>
+    </div>
+  </section>
+
+  <!-- HOURS & CONTACT -->
+  <section class="hours-section section" id="hours">
+    <div class="container">
+      <div class="hours-grid">
+        <div class="reveal">
+          <p class="section-tag">Horaris</p>
+          <h2 class="section-title">Quan estem oberts</h2>
+          <table class="hours-table">
+            <tr class="closed"><td>Dilluns</td><td>Tancat</td></tr>
+            <tr><td>Dimarts</td><td>8:00–13:00 · 16:30–21:30</td></tr>
+            <tr><td>Dimecres</td><td>7:30–13:00 · 16:30–21:30</td></tr>
+            <tr><td>Dijous</td><td>7:30–13:00 · 16:30–21:30</td></tr>
+            <tr><td>Divendres</td><td>7:30–13:00 · 16:30–23:00</td></tr>
+            <tr><td>Dissabte</td><td>8:00–15:00 · 18:00–23:00</td></tr>
+            <tr><td>Diumenge</td><td>8:00–15:00 · 18:00–21:30</td></tr>
+          </table>
+        </div>
+        <div class="reveal">
+          <p class="section-tag">Contacte</p>
+          <h2 class="section-title">Vine a visitar-nos</h2>
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <div class="contact-label">Adreça</div>
+              <div class="contact-value">Carrer Batlle Joan Deu, 13<br>08181 Sentmenat, Barcelona</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <div class="contact-label">Telèfon</div>
+              <a href="tel:+34616464340" class="contact-value">+34 616 46 43 40</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📸</div>
+            <div>
+              <div class="contact-label">Instagram</div>
+              <a href="https://www.instagram.com/_ilpiccolocaffe_/" target="_blank" class="contact-value">@_ilpiccolocaffe_</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🅿️</div>
+            <div>
+              <div class="contact-label">Aparcament</div>
+              <div class="contact-value">Gratuït i fàcil prop del local</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">☀️</div>
+            <div>
+              <div class="contact-label">Terrassa</div>
+              <div class="contact-value">Exterior amb servei de taula</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAP -->
+  <section class="map-section section" id="location">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-tag">On som</p>
+        <h2 class="section-title">Ens trobaràs a Sentmenat</h2>
+      </div>
+      <a href="https://www.google.com/maps/place/IL+PICCOLO+CAFF%C3%88/@41.6080951,2.1355054,79m/data=!3m1!1e3!4m6!3m5!1s0x12a4ebbc12c0e19b:0x9ec40e76853e28cc!8m2!3d41.6080951!4d2.1357652!16s%2Fg%2F11kq66ghw6"
+         target="_blank" rel="noopener" class="map-link-card reveal">
+        <div class="map-icon">📍</div>
+        <div class="map-title">Il Piccolo Caffè</div>
+        <div class="map-addr">Carrer Batlle Joan Deu, 13 · 08181 Sentmenat</div>
+        <div class="map-cta-label">Obrir a Google Maps →</div>
+        <div class="btn btn-primary" style="margin-top:0.5rem; pointer-events:none">Com arribar-hi</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews-section section">
+    <div class="container">
+      <div class="reviews-header reveal">
+        <p class="section-tag" style="justify-content:center">El que diuen de nosaltres</p>
+        <h2 class="section-title" style="text-align:center">Ressenyes dels clients</h2>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card reveal">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"El servei és excel·lent, aparcament fàcil i gratuït, i és un lloc tranquil per passar el matí o la tarda. El menjar i el cafè estan molt bons."</p>
+          <div class="review-author">Client de Google</div>
+        </div>
+        <div class="review-card reveal">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Tot va ser excel·lent, el servei va ser el millor que he experimentat, els entrepans de primera. Hi tornaré, ho recomano molt!"</p>
+          <div class="review-author">Client de Google</div>
+        </div>
+        <div class="review-card reveal">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Una cafeteria molt acollidora i familiar. El servei va ser excel·lent. Recomanat, bon tracte, entrepans calents i terrassa amb servei."</p>
+          <div class="review-author">Client de Google</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Il Piccolo Caffè</div>
+    <div class="footer-sub">Cafeteria · Dolç i Salat · Sentmenat</div>
+    <div class="footer-links">
+      <a href="tel:+34616464340" class="btn btn-outline" style="font-size:0.72rem">📞 +34 616 46 43 40</a>
+      <a href="https://www.instagram.com/_ilpiccolocaffe_/" target="_blank" class="btn btn-outline" style="font-size:0.72rem">📸 Instagram</a>
+      <a href="https://www.google.com/maps/place/IL+PICCOLO+CAFF%C3%88/@41.6080951,2.1355054,79m" target="_blank" class="btn btn-outline" style="font-size:0.72rem">📍 Google Maps</a>
+    </div>
+    <p class="footer-bottom">Carrer Batlle Joan Deu, 13 · 08181 Sentmenat, Barcelona</p>
+  </footer>
+
+  <script>
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Menu tabs
+    function showTab(id, btn) {
+      document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>
